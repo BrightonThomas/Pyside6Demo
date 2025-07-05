@@ -1,44 +1,25 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication,QMainWindow,QPushButton,QSlider,QWidget
-# Only needed for access to command line arguments
 import sys
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
-# You need one (and only one) QApplication instance per application.
-# Pass in sys.argv to allow command line arguments for your app.
-# If you know you won't use command line arguments QApplication([]) works too.
-
-class MainWindow(QMainWindow):
+class GeoJSONBrowser(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Earthquake Analysis Tool")
-        self.resize(1000, 1000)
+        self.setWindowTitle("geojson.io Viewer")
+        self.setGeometry(100, 100, 1200, 800)
 
-        self.button=QPushButton("Analyze")
-        self.button.setToolTip("Click to analyze earthquake data")
-        self.button.setCheckable(True)
-        self.button.clicked.connect(self.button1_clicked)
-        self.setCentralWidget(self.button)
-        self.button.show()
+        self.web_view = QWebEngineView()
+        self.web_view.load("https://geojson.io")
 
-        #slider
-        self.slider=QSlider(Qt.Horizontal)
-        self.slider.setRange(0, 100)
-        self.slider.setValue(50)
-        self.setCentralWidget(self.slider)
-        self.slider.valueChanged.connect(self.slider_changed)
-        self.slider.show()
+        layout = QVBoxLayout()
+        layout.addWidget(self.web_view)
 
-    def button1_clicked(self):
-        print("Button clicked!")
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
 
-    def slider_changed(self, value):
-        print(f"Slider value changed: {value}")
-
-
-app=QApplication(sys.argv)
-
-window=MainWindow()
-window.show()
-
-app.exec()  # This starts the event loop and waits for events to be processed.
-
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = GeoJSONBrowser()
+    window.show()
+    sys.exit(app.exec())
